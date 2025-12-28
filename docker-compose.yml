@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: salesdb
+      POSTGRES_USER: salesuser
+      POSTGRES_PASSWORD: salespass
+    volumes:
+      - ./data:/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  spark-etl:
+    build: .
+    container_name: spark-etl
+    depends_on:
+      - postgres
+    volumes:
+      - ./output:/app/output
+    ports:
+      - "4040:4040"
